@@ -534,7 +534,7 @@ export default function Home() {
 
             {/* Chatbot Popup */}
             {isChatOpen && (
-                <div className="fixed bottom-20 right-4 left-4 sm:left-auto sm:right-6 sm:w-80 md:w-96 bg-white rounded-2xl shadow-2xl z-[9998] overflow-hidden animate-fadeInUp max-h-[70vh] flex flex-col">
+                <div className="fixed bottom-20 right-4 left-4 sm:left-auto sm:right-6 sm:w-80 md:w-96 bg-white rounded-2xl shadow-2xl z-[9998] overflow-hidden animate-fadeInUp max-h-[90vh] flex flex-col">
                     <div className="bg-sky-500 p-4 text-white flex items-center justify-between">
                         <div className="flex items-center gap-2">
                             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
@@ -553,7 +553,7 @@ export default function Home() {
                             </svg>
                         </button>
                     </div>
-                    <div className="flex-1 min-h-[200px] max-h-[50vh] p-4 overflow-y-auto bg-slate-50 flex flex-col gap-3">
+                    <div className="flex-1 min-h-[350px] max-h-[70vh] p-4 overflow-y-auto bg-slate-50 flex flex-col gap-3">
                         {chatMessages.map((msg, i) => (
                             <div key={i} className={`p-3 rounded-2xl shadow-sm max-w-[85%] text-sm ${msg.role === "user"
                                 ? "bg-sky-100 text-sky-800 ml-auto rounded-tr-none"
