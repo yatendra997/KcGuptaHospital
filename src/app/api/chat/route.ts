@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "AIzaSyBIWfUf9Nh5yre54h62HOnGgQ6Hs8YFqew";
 const MODEL = "gemma-3-4b-it";
 
 const HOSPITAL_CONTEXT = `You are a helpful hospital assistant for Dr. K.C. Memorial Gupta Hospital in Gajraula, Uttar Pradesh, India.
@@ -60,7 +59,7 @@ export async function POST(request: NextRequest) {
         ];
 
         const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${GEMINI_API_KEY}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${process.env.GEMINI_API_KEY}`,
             {
                 method: "POST",
                 headers: {
