@@ -1,0 +1,10 @@
+<svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Pharmacy Bottle Body -->
+  <path d="M7 8V20C7 21.1046 7.89543 22 9 22H15C16.1046 22 17 21.1046 17 20V8" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round"/>
+  <!-- Bottle Cap Line -->
+  <path d="M6 5H18" stroke="#14b8a6" stroke-width="2" stroke-linecap="round"/>
+  <!-- Cap Top -->
+  <path d="M9 5L9 3H15V5" stroke="#14b8a6" stroke-width="2" stroke-linejoin="round"/>
+  <!-- Medical Cross on Bottle -->
+  <path d="M12 11V17M9 14H15" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round"/>
+</svg>
