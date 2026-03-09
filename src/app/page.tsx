@@ -381,10 +381,11 @@ export default function Home() {
                                 </div>
                                 <h3 className="font-bold text-lg">{doc.name}</h3>
                                 <p className="text-sky-500 text-sm font-medium">{doc.role}</p>
-                                <p className="text-gray-500 text-sm mt-1">{doc.specialty}</p>
-                                <div className="mt-3 inline-block px-3 py-1 bg-sky-50 text-sky-600 rounded-full text-xs font-medium">
-                                    {doc.exp}
-                                </div>
+                                {doc.exp && (
+                                    <div className="mt-3 inline-block px-3 py-1 bg-sky-50 text-sky-600 rounded-full text-xs font-medium">
+                                        {doc.exp}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
