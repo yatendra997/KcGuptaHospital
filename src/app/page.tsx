@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 
 const services = [
     { icon: "/images/services/general-medicine.svg", title: "General Medicine", desc: "Comprehensive healthcare for adults with expert diagnosis and treatment" },
@@ -98,7 +99,7 @@ export default function Home() {
                 <div className="container">
                     <div className="flex items-center justify-between h-16 md:h-20 w-full">
                         <a href="#home" className="flex items-center gap-2 lg:gap-3 group shrink-0">
-                            <img src="/images/logo-new.svg" alt="Logo Icon" className="h-10 md:h-12 w-auto group-hover:scale-110 transition-transform" />
+                            <Image src="/images/logo-new.svg" alt="Logo Icon" width={48} height={48} className="h-10 md:h-12 w-auto group-hover:scale-110 transition-transform" />
                             <div className="flex flex-col justify-center text-left">
                                 <span className="text-gray-500 font-bold text-[10px] md:text-xs uppercase tracking-widest leading-none mb-0.5">Dr. K.C. Memorial</span>
                                 <span className="text-sky-600 font-black text-lg md:text-xl tracking-tighter leading-none whitespace-nowrap">Gupta Hospital</span>
@@ -223,9 +224,11 @@ export default function Home() {
                         {/* Hero Image - Visible on all screens */}
                         <div className="relative mt-6 lg:mt-0">
                             <div className="relative z-10">
-                                <img
+                                <Image
                                     src="/images/hero.jpg"
                                     alt="Dr. K.C. Memorial Gupta Hospital"
+                                    width={600}
+                                    height={400}
                                     className="w-full h-auto rounded-2xl lg:rounded-3xl shadow-xl lg:shadow-2xl shadow-sky-200/50"
                                 />
                                 {/* Floating Badge - Hidden on mobile */}
@@ -293,9 +296,11 @@ export default function Home() {
 
                         <div className="relative mt-8 md:mt-0">
                             <div className="rounded-2xl overflow-hidden shadow-2xl">
-                                <img
+                                <Image
                                     src="/images/About.PNG"
                                     alt="Dr. K.C. Memorial Gupta Hospital Facility"
+                                    width={600}
+                                    height={400}
                                     className="w-full h-auto object-cover"
                                 />
                             </div>
@@ -321,7 +326,7 @@ export default function Home() {
                         {services.map((service) => (
                             <div key={service.title} className="card group hover:border-sky-200">
                                 <div className="mb-4 bg-sky-50 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
-                                    <img src={service.icon} alt={service.title} className="w-10 h-10" />
+                                    <Image src={service.icon} alt={service.title} width={40} height={40} className="w-10 h-10" />
                                 </div>
                                 <h3 className="text-xl font-bold mb-2">{service.title}</h3>
                                 <p className="text-gray-600">{service.desc}</p>
@@ -549,7 +554,7 @@ export default function Home() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 text-center sm:text-left">
                         <div className="sm:col-span-2 lg:col-span-1">
                             <div className="flex items-center gap-2 lg:gap-3 mb-4 justify-center sm:justify-start">
-                                <img src="/images/logo-new.svg" alt="Logo Icon" className="h-10 w-auto" />
+                                <Image src="/images/logo-new.svg" alt="Logo Icon" width={40} height={40} className="h-10 w-auto" />
                                 <div className="flex flex-col justify-center text-left">
                                     <span className="text-gray-400 font-bold text-[10px] uppercase tracking-widest leading-none mb-0.5">Dr. K.C. Memorial</span>
                                     <span className="text-sky-400 font-black text-lg tracking-tighter leading-none whitespace-nowrap">Gupta Hospital</span>
