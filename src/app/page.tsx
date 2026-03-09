@@ -5,17 +5,20 @@ import { useState, useRef } from "react";
 const services = [
     { icon: "/images/services/general-medicine.svg", title: "General Medicine", desc: "Comprehensive healthcare for adults with expert diagnosis and treatment" },
     { icon: "/images/services/pediatrics.svg", title: "Pediatrics", desc: "Specialized care for infants, children, and adolescents" },
-    { icon: "/images/services/emergency.svg", title: "Emergency Care", desc: "24/7 emergency services with rapid response team" },
+    { icon: "/images/services/pharmacy.svg", title: "Inhouse Pharmacy", desc: "Fully stocked 24/7 pharmacy ensuring timely access to all critical and prescribed medicines" },
     { icon: "/images/services/laboratory.svg", title: "Laboratory", desc: "State-of-the-art diagnostic testing and pathology services" },
     { icon: "/images/services/vaccination.svg", title: "Vaccination", desc: "Complete immunization programs for all age groups" },
     { icon: "/images/services/health-checkup.svg", title: "Health Checkup", desc: "Preventive health screenings and wellness programs" },
+    { icon: "/images/services/ot.svg", title: "Operation Theater (OT)", desc: "Fully equipped, advanced surgical suites ensuring maximum patient safety" },
+    { icon: "/images/services/xray.svg", title: "X-Ray Imaging", desc: "High-resolution digital X-ray services for swift and accurate diagnosis" },
+    { icon: "/images/services/ultrasound.svg", title: "Ultrasound (3D, 4D)", desc: "Detailed 3D/4D ultrasound imaging for comprehensive obstetrical and general health screening" },
 ];
 
 const doctors = [
-    { name: "Dr. K.C. Gupta", role: "Founder & Chief Medical Officer", specialty: "Internal Medicine", exp: "30+ years" },
-    { name: "Dr. Priya Sharma", role: "Senior Consultant", specialty: "Pediatrics", exp: "18+ years" },
-    { name: "Dr. Amit Verma", role: "Consultant", specialty: "General Surgery", exp: "15+ years" },
-    { name: "Dr. Sunita Patel", role: "Consultant", specialty: "Gynecology", exp: "12+ years" },
+    { name: "Late Dr. K.C. Gupta", role: "Founder" },
+    { name: "Dr. Sachin Gupta (MBBS), DEM(Medicine)", role: "Consultant Physician", exp: "15+ years" },
+    { name: "Dr. Shweta Gupta (MBBS)", role: "Gynecology & Obstetrics", exp: "8+ years" },
+    { name: "Dr. Gajal Gupta (MBBS, MD)", role: "Consultant Psychiatrist", exp: "5+ years" },
 ];
 
 const testimonials = [
@@ -28,8 +31,10 @@ const navLinks = [
     { href: "#home", label: "Home" },
     { href: "#about", label: "About" },
     { href: "#services", label: "Services" },
+    { href: "#rooms", label: "Rooms" },
     { href: "#doctors", label: "Doctors" },
     { href: "#testimonials", label: "Testimonials" },
+    { href: "#tpa", label: "TPA Helpdesk" },
     { href: "#contact", label: "Contact" },
 ];
 
@@ -91,27 +96,27 @@ export default function Home() {
             {/* Navigation */}
             <nav className="fixed top-0 left-0 right-0 z-50 glass shadow-sm">
                 <div className="container">
-                    <div className="flex items-center justify-between h-16 md:h-20">
-                        <a href="#home" className="flex items-center gap-3 group">
-                            <img src="/images/logo-new.svg" alt="Logo Icon" className="h-12 w-auto group-hover:scale-110 transition-transform" />
-                            <div className="flex flex-col leading-tight">
-                                <span className="text-gray-900 font-bold text-lg md:text-xl tracking-tight">Dr. K.C. Memorial</span>
-                                <span className="text-sky-500 font-bold text-xs md:text-sm uppercase tracking-widest">Gupta Hospital</span>
+                    <div className="flex items-center justify-between h-16 md:h-20 w-full">
+                        <a href="#home" className="flex items-center gap-2 lg:gap-3 group shrink-0">
+                            <img src="/images/logo-new.svg" alt="Logo Icon" className="h-10 md:h-12 w-auto group-hover:scale-110 transition-transform" />
+                            <div className="flex flex-col justify-center text-left">
+                                <span className="text-gray-500 font-bold text-[10px] md:text-xs uppercase tracking-widest leading-none mb-0.5">Dr. K.C. Memorial</span>
+                                <span className="text-sky-600 font-black text-lg md:text-xl tracking-tighter leading-none whitespace-nowrap">Gupta Hospital</span>
                             </div>
                         </a>
 
                         {/* Desktop Menu */}
-                        <div className="hidden lg:flex items-center gap-6">
+                        <div className="hidden lg:flex items-center justify-end flex-1 gap-4 xl:gap-6 text-sm lg:text-[13px] xl:text-sm font-medium ml-8 overflow-hidden">
                             {navLinks.map((link) => (
                                 <a
                                     key={link.href}
                                     href={link.href}
-                                    className="text-gray-600 hover:text-sky-500 font-medium transition-colors"
+                                    className="text-slate-700 hover:text-sky-500 transition-colors whitespace-nowrap"
                                 >
                                     {link.label}
                                 </a>
                             ))}
-                            <a href="#contact" className="btn btn-primary text-sm py-2 px-4">
+                            <a href="#contact" className="btn btn-primary text-sm py-2 px-5 whitespace-nowrap shrink-0 shadow-md hover:shadow-lg transition-all ml-2">
                                 Book Appointment
                             </a>
                         </div>
@@ -134,17 +139,26 @@ export default function Home() {
 
                     {/* Mobile Menu */}
                     {mobileMenuOpen && (
-                        <div className="lg:hidden py-4 border-t border-gray-100">
+                        <div className="lg:hidden py-4 border-t border-gray-100 flex flex-col gap-2">
                             {navLinks.map((link) => (
                                 <a
                                     key={link.href}
                                     href={link.href}
-                                    className="block py-2 text-gray-600 hover:text-sky-500"
+                                    className="block py-2 text-gray-600 hover:text-sky-500 font-medium"
                                     onClick={() => setMobileMenuOpen(false)}
                                 >
                                     {link.label}
                                 </a>
                             ))}
+                            <div className="pt-2 mt-2 border-t border-gray-50">
+                                <a
+                                    href="#contact"
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className="btn btn-primary w-full justify-center text-sm py-2.5"
+                                >
+                                    Book Appointment
+                                </a>
+                            </div>
                         </div>
                     )}
                 </div>
@@ -171,10 +185,9 @@ export default function Home() {
                                 📍 Gajraula, Uttar Pradesh
                             </span>
 
-                            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-extrabold mb-4 md:mb-6 leading-tight">
-                                <span className="text-slate-800">Dr. K.C. Memorial</span>
-                                <br />
-                                <span className="bg-gradient-to-r from-sky-500 via-sky-600 to-teal-500 bg-clip-text text-transparent">
+                            <h1 className="mb-4 md:mb-6 leading-tight flex flex-col gap-1 md:gap-2">
+                                <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-slate-700">Dr. K.C. Memorial</span>
+                                <span className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-extrabold bg-gradient-to-r from-sky-500 via-sky-600 to-teal-500 bg-clip-text text-transparent">
                                     Gupta Hospital
                                 </span>
                             </h1>
@@ -225,7 +238,7 @@ export default function Home() {
                                         </div>
                                         <div>
                                             <div className="text-lg font-bold text-slate-800">Trusted Care</div>
-                                            <div className="text-sm text-slate-500">Since 1990</div>
+                                            <div className="text-sm text-slate-500">Since 2012</div>
                                         </div>
                                     </div>
                                 </div>
@@ -242,7 +255,7 @@ export default function Home() {
                 <div className="blob -top-24 -left-24" />
                 <div className="blob -bottom-24 -right-24" />
                 <div className="container relative z-10">
-                    <h2 className="section-title">About <span className="gradient-text">Our Hospital</span></h2>
+                    <h2 className="section-title">About <span className="gradient-text">Hospital</span></h2>
                     <p className="section-subtitle">
                         Delivering quality healthcare to the community of Gajraula
                     </p>
@@ -318,8 +331,41 @@ export default function Home() {
                 </div>
             </section>
 
+            {/* Rooms Section */}
+            <section id="rooms" className="section bg-white relative overflow-hidden">
+                <div className="blob top-0 right-0 opacity-20" />
+                <div className="container relative z-10">
+                    <h2 className="section-title">Our <span className="gradient-text">Rooms & Wards</span></h2>
+                    <p className="section-subtitle">
+                        Comfortable and well-equipped accommodation options for our patients
+                    </p>
+
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {[
+                            { name: "General Ward", desc: "Spacious and well-ventilated wards with continuous monitoring and dedicated nursing staff.", icon: "🏥", features: ["24/7 Nursing", "Ventilated", "Affordable Care"] },
+                            { name: "Private Ward", desc: "Comfortable private rooms available with AC and Non-AC options for patient privacy.", icon: "🛏️", features: ["AC / Non-AC", "Attendant Bed", "Attached Bath"] },
+                            { name: "Deluxe Room", desc: "Premium rooms equipped with modern amenities, TV, and a relaxing environment.", icon: "🌟", features: ["Fully AC", "TV & WiFi", "Premium Care"] },
+                            { name: "ICU", desc: "State-of-the-art Intensive Care Unit with advanced life support systems.", icon: "❤️‍🩹", features: ["Advanced Monitors", "1:1 Nursing Care", "Life Support"] },
+                        ].map((room) => (
+                            <div key={room.name} className="card group hover:-translate-y-2 transition-transform duration-300 border border-gray-100 hover:border-sky-200 hover:shadow-xl hover:shadow-sky-100 flex flex-col bg-white">
+                                <div className="text-4xl mb-4 p-4 bg-gradient-to-br from-sky-50 to-teal-50 rounded-2xl inline-block group-hover:scale-110 transition-transform self-start shadow-sm border border-sky-100">{room.icon}</div>
+                                <h3 className="text-xl font-bold mb-3">{room.name}</h3>
+                                <p className="text-gray-600 text-sm mb-5 flex-1">{room.desc}</p>
+                                <ul className="space-y-2 mt-auto pt-4 border-t border-gray-50">
+                                    {room.features.map((feature, i) => (
+                                        <li key={i} className="flex items-center gap-2 text-sm text-slate-700 font-medium">
+                                            <span className="w-5 h-5 rounded-full bg-teal-50 text-teal-500 flex items-center justify-center text-xs">✓</span> {feature}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
             {/* Doctors Section */}
-            <section id="doctors" className="section bg-white relative">
+            <section id="doctors" className="section bg-slate-50 relative">
                 <div className="blob top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-50" />
                 <div className="container relative z-10">
                     <h2 className="section-title">Meet Our <span className="gradient-text">Experts</span></h2>
@@ -369,6 +415,36 @@ export default function Home() {
                                 </div>
                             </div>
                         ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* TPA Helpdesk Section */}
+            <section id="tpa" className="section bg-gradient-to-br from-sky-500 to-teal-500 py-12 md:py-16 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(#ffffff80_1px,transparent_1px)] [background-size:20px_20px] opacity-20" />
+                <div className="container relative z-10">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-8 bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-white/20 shadow-2xl">
+                        <div className="text-center md:text-left text-white max-w-2xl">
+                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full text-sm font-semibold mb-6">
+                                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                                Insurance & TPA Services
+                            </div>
+                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">Cashless Treatment Available</h2>
+                            <p className="text-sky-50 text-lg md:text-xl">
+                                We are empaneled with major health insurance companies and TPAs. Our dedicated helpdesk ensures a smooth, hassle-free cashless hospitalization experience.
+                            </p>
+                        </div>
+                        <div className="flex-shrink-0">
+                            <a href="tel:+918954155336" className="group flex items-center gap-4 bg-white text-slate-800 p-4 md:p-6 rounded-2xl hover:bg-slate-50 transition-all shadow-xl hover:-translate-y-1 border-2 border-transparent hover:border-sky-200">
+                                <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <span className="text-xl">📞</span>
+                                </div>
+                                <div className="text-left">
+                                    <div className="text-xs md:text-sm text-slate-500 font-medium mb-1 tracking-wider uppercase">TPA Helpdesk</div>
+                                    <div className="text-xl md:text-2xl font-black text-sky-600 tracking-tight">+91 8954155336</div>
+                                </div>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -471,11 +547,11 @@ export default function Home() {
                 <div className="container relative z-10">
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 text-center sm:text-left">
                         <div className="sm:col-span-2 lg:col-span-1">
-                            <div className="flex items-center gap-3 mb-4 justify-center sm:justify-start">
+                            <div className="flex items-center gap-2 lg:gap-3 mb-4 justify-center sm:justify-start">
                                 <img src="/images/logo-new.svg" alt="Logo Icon" className="h-10 w-auto" />
-                                <div className="flex flex-col leading-tight">
-                                    <span className="text-white font-bold text-lg tracking-tight">Dr. K.C. Memorial</span>
-                                    <span className="text-sky-400 font-bold text-xs uppercase tracking-widest">Gupta Hospital</span>
+                                <div className="flex flex-col justify-center text-left">
+                                    <span className="text-gray-400 font-bold text-[10px] uppercase tracking-widest leading-none mb-0.5">Dr. K.C. Memorial</span>
+                                    <span className="text-sky-400 font-black text-lg tracking-tighter leading-none whitespace-nowrap">Gupta Hospital</span>
                                 </div>
                             </div>
                             <p className="text-gray-400 text-sm max-w-xs mx-auto sm:mx-0">
