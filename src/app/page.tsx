@@ -1,25 +1,45 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 
-const services = [
-    { icon: "/images/services/general-medicine.svg", title: "General Medicine", desc: "Comprehensive healthcare for adults with expert diagnosis and treatment" },
-    { icon: "/images/services/pediatrics.svg", title: "Pediatrics", desc: "Specialized care for infants, children, and adolescents" },
-    { icon: "/images/services/pharmacy.svg", title: "Inhouse Pharmacy", desc: "Fully stocked 24/7 pharmacy ensuring timely access to all critical and prescribed medicines" },
-    { icon: "/images/services/laboratory.svg", title: "Laboratory", desc: "State-of-the-art diagnostic testing and pathology services" },
-    { icon: "/images/services/vaccination.svg", title: "Vaccination", desc: "Complete immunization programs for all age groups" },
-    { icon: "/images/services/health-checkup.svg", title: "Health Checkup", desc: "Preventive health screenings and wellness programs" },
-    { icon: "/images/services/ot.svg", title: "Operation Theater (OT)", desc: "Fully equipped, advanced surgical suites ensuring maximum patient safety" },
-    { icon: "/images/services/xray.svg", title: "X-Ray Imaging", desc: "High-resolution digital X-ray services for swift and accurate diagnosis" },
-    { icon: "/images/services/ultrasound.svg", title: "Ultrasound (3D, 4D)", desc: "Detailed 3D/4D ultrasound imaging for comprehensive obstetrical and general health screening" },
+const services: { image: string | null; title: string; desc: string; icon?: string }[] = [
+    { image: "/images/services/general-medicine.png", title: "General Medicine", desc: "Comprehensive healthcare for adults with expert diagnosis and treatment" },
+    { image: "/images/services/pediatrics.png", title: "Pediatrics", desc: "Specialized care for infants, children, and adolescents" },
+    { image: "/images/services/inhouse-pharmacy.png", title: "Inhouse Pharmacy", desc: "Fully stocked 24/7 pharmacy ensuring timely access to all critical and prescribed medicines" },
+    { image: "/images/services/laboratory.png", title: "Laboratory", desc: "State-of-the-art diagnostic testing and pathology services" },
+    { image: "/images/services/vaccination.png", title: "Vaccination", desc: "Complete immunization programs for all age groups" },
+    { image: "/images/services/health-checkup.png", title: "Health Checkup", desc: "Preventive health screenings and wellness programs" },
+    { image: "/images/services/operation.png", title: "Operation Theater (OT)", desc: "Fully equipped, advanced surgical suites ensuring maximum patient safety" },
+    { image: "/images/services/x-ray-imaging.png", title: "X-Ray Imaging", desc: "High-resolution digital X-ray services for swift and accurate diagnosis" },
+    { image: "/images/services/ultrasound.png", title: "Ultrasound (3D, 4D)", desc: "Detailed 3D/4D ultrasound imaging for comprehensive obstetrical and general health screening" },
 ];
 
-const doctors = [
+const doctors: { name: string; role: string; exp?: string; specialty?: string; tag?: string; credentials?: string[]; memberOf?: string; formerlyAt?: string }[] = [
     { name: "Late Dr. K.C. Gupta", role: "Founder" },
-    { name: "Dr. Sachin Gupta (MBBS), DEM(Medicine)", role: "Consultant Physician", exp: "15+ years" },
-    { name: "Dr. Shweta Gupta (MBBS)", role: "Gynecology & Obstetrics", exp: "8+ years" },
+    {
+        name: "Dr. Sachin Gupta",
+        role: "Consultant Physician",
+        tag: "Chairman",
+        exp: "15+ years",
+        credentials: ["MBBS", "DEM (Medicine)", "Royal College, England (UK)", "FAGE (Mpl)", "MCCP (USA)"],
+        specialty: "Specialist In: Chest, Heart, Abdominal Diseases & Diabetes",
+        memberOf: "Prof. Member: American Diabetes Association",
+        formerlyAt: "Formerly at: Indraprastha Apollo Hospital, New Delhi",
+    },
+    { name: "Dr. Shweta Gupta (MBBS)", role: "Gynecology & Obstetrics", exp: "8+ years", specialty: "Infertility Specialist" },
     { name: "Dr. Gajal Gupta (MBBS, MD)", role: "Consultant Psychiatrist", exp: "5+ years" },
+];
+
+const galleryPhotos = [
+    { src: "/images/gallery/gallery-1.png", label: "Hospital Building" },
+    { src: "/images/gallery/Gallery-2.png", label: "Laboratory" },
+    { src: "/images/gallery/gallery-3.png", label: "Reception Desk" },
+    { src: "/images/gallery/Gallery-4.png", label: "Consultation Room" },
+    { src: "/images/gallery/Gallery-5.png", label: "Patient Waiting Area" },
+    { src: "/images/gallery/gallery-6.png", label: "Private Ward Room" },
+    { src: "/images/gallery/Gallery-7.png", label: "Deluxe Room" },
+    { src: "/images/gallery/ot entrance.jpg", label: "OT Entrance" },
 ];
 
 const testimonials = [
@@ -34,6 +54,7 @@ const navLinks = [
     { href: "#services", label: "Services" },
     { href: "#rooms", label: "Rooms" },
     { href: "#doctors", label: "Doctors" },
+    { href: "#gallery", label: "Gallery" },
     { href: "#testimonials", label: "Testimonials" },
     { href: "#tpa", label: "TPA Helpdesk" },
     { href: "#contact", label: "Contact" },
@@ -49,6 +70,36 @@ export default function Home() {
     const [chatInput, setChatInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const chatInputRef = useRef<HTMLInputElement>(null);
+
+    // Auto-open chatbot after 2.5s with a beep — only once per session
+    useEffect(() => {
+        if (sessionStorage.getItem("chatAutoOpened")) return;
+        const timer = setTimeout(() => {
+            // Play a pleasant two-tone beep via Web Audio API
+            try {
+                const ctx = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+                const playTone = (freq: number, start: number, duration: number, vol: number) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.type = "sine";
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + start);
+                    gain.gain.setValueAtTime(0, ctx.currentTime + start);
+                    gain.gain.linearRampToValueAtTime(vol, ctx.currentTime + start + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + duration);
+                    osc.start(ctx.currentTime + start);
+                    osc.stop(ctx.currentTime + start + duration);
+                };
+                playTone(880, 0, 0.18, 0.3);   // high A
+                playTone(1100, 0.2, 0.22, 0.25); // higher C#
+            } catch { /* silently ignore if audio is blocked */ }
+
+            setIsChatOpen(true);
+            sessionStorage.setItem("chatAutoOpened", "1");
+        }, 2500);
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -78,7 +129,7 @@ export default function Home() {
         } catch {
             setChatMessages(prev => [...prev, {
                 role: "assistant",
-                content: "Sorry, having trouble. Please call +91 98765 43210."
+                content: "Sorry, having trouble. Please call +91 90390 67378."
             }]);
         } finally {
             setIsLoading(false);
@@ -324,12 +375,27 @@ export default function Home() {
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {services.map((service) => (
-                            <div key={service.title} className="card group hover:border-sky-200">
-                                <div className="mb-4 bg-sky-50 w-16 h-16 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
-                                    <Image src={service.icon} alt={service.title} width={40} height={40} className="w-10 h-10" />
+                            <div key={service.title} className="card group hover:border-sky-200 overflow-hidden !p-0 flex flex-col">
+                                {service.image ? (
+                                    <div className="relative w-full h-48 overflow-hidden">
+                                        <Image
+                                            src={service.image}
+                                            alt={service.title}
+                                            fill
+                                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                        />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                                    </div>
+                                ) : (
+                                    <div className="w-full h-48 bg-gradient-to-br from-sky-50 to-teal-50 flex items-center justify-center text-6xl border-b border-gray-100">
+                                        {service.icon}
+                                    </div>
+                                )}
+                                <div className="p-5 flex-1 flex flex-col">
+                                    <h3 className="text-xl font-bold mb-2">{service.title}</h3>
+                                    <p className="text-gray-600 text-sm flex-1">{service.desc}</p>
                                 </div>
-                                <h3 className="text-xl font-bold mb-2">{service.title}</h3>
-                                <p className="text-gray-600">{service.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -378,19 +444,68 @@ export default function Home() {
                         Experienced and compassionate medical professionals
                     </p>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
                         {doctors.map((doc) => (
-                            <div key={doc.name} className="card text-center group">
-                                <div className="w-24 h-24 mx-auto mb-4 bg-gradient-to-br from-sky-100 to-teal-100 rounded-full flex items-center justify-center text-4xl group-hover:scale-105 transition-transform border-4 border-white shadow-lg">
-                                    👨‍⚕️
-                                </div>
-                                <h3 className="font-bold text-lg">{doc.name}</h3>
-                                <p className="text-sky-500 text-sm font-medium">{doc.role}</p>
-                                {doc.exp && (
-                                    <div className="mt-3 inline-block px-3 py-1 bg-sky-50 text-sky-600 rounded-full text-xs font-medium">
-                                        {doc.exp}
+                            <div key={doc.name} className="bg-white rounded-2xl border border-gray-100 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden">
+                                {/* Card Header */}
+                                <div className="bg-gradient-to-br from-sky-50 via-white to-teal-50 px-6 pt-6 pb-4 flex flex-col items-center border-b border-gray-100">
+                                    <div className="w-20 h-20 bg-gradient-to-br from-sky-100 to-teal-100 rounded-full flex items-center justify-center text-3xl border-4 border-white shadow-lg mb-3">
+                                        👨‍⚕️
                                     </div>
-                                )}
+                                    {doc.tag ? (
+                                        <span className="inline-flex items-center gap-1 px-3 py-0.5 bg-gradient-to-r from-amber-400 to-orange-400 text-white text-[11px] font-bold rounded-full shadow-sm mb-2">
+                                            👑 {doc.tag}
+                                        </span>
+                                    ) : (
+                                        <div className="mb-2 h-5" />
+                                    )}
+                                    <h3 className="font-bold text-base text-slate-800 text-center leading-snug">{doc.name}</h3>
+                                    {doc.credentials ? (
+                                        <p className="text-slate-500 text-[11px] mt-1 text-center leading-relaxed">{doc.credentials.join(" • ")}</p>
+                                    ) : (
+                                        <div className="mt-1 h-4" />
+                                    )}
+                                </div>
+                                {/* Card Body */}
+                                <div className="px-5 py-4 flex flex-col flex-1 gap-2">
+                                    <div className="flex items-center gap-2">
+                                        <span className="w-1.5 h-1.5 rounded-full bg-sky-400 flex-shrink-0"></span>
+                                        <p className="text-sky-600 text-sm font-semibold">{doc.role}</p>
+                                    </div>
+                                    {doc.specialty && (
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-red-400 text-xs mt-0.5 flex-shrink-0">★</span>
+                                            <p className="text-slate-700 text-xs leading-snug">{doc.specialty}</p>
+                                        </div>
+                                    )}
+                                    {doc.memberOf && (
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-teal-500 text-xs mt-0.5 flex-shrink-0">🌐</span>
+                                            <p className="text-slate-600 text-xs italic leading-snug">{doc.memberOf}</p>
+                                        </div>
+                                    )}
+                                    {doc.formerlyAt && (
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-slate-400 text-xs mt-0.5 flex-shrink-0">🏥</span>
+                                            <p className="text-slate-500 text-[11px] italic leading-snug">{doc.formerlyAt}</p>
+                                        </div>
+                                    )}
+                                    {/* Spacer to push exp badge to bottom */}
+                                    <div className="flex-1" />
+                                    {doc.exp ? (
+                                        <div className="pt-3 border-t border-gray-100">
+                                            <span className="inline-flex items-center gap-1 px-3 py-1 bg-sky-50 text-sky-600 rounded-full text-xs font-semibold border border-sky-100">
+                                                ⏱️ {doc.exp} Experience
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div className="pt-3 border-t border-gray-100">
+                                            <span className="inline-flex items-center gap-1 px-3 py-1 bg-slate-50 text-slate-400 rounded-full text-xs font-medium border border-slate-100">
+                                                Founder
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -425,33 +540,158 @@ export default function Home() {
                 </div>
             </section>
 
-            {/* TPA Helpdesk Section */}
-            <section id="tpa" className="section bg-gradient-to-br from-sky-500 to-teal-500 py-12 md:py-16 relative overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(#ffffff80_1px,transparent_1px)] [background-size:20px_20px] opacity-20" />
+            {/* Gallery Section */}
+            <section id="gallery" className="section bg-slate-50 relative overflow-hidden">
+                <div className="blob -top-24 -right-24 opacity-20" />
                 <div className="container relative z-10">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-8 bg-white/10 backdrop-blur-md rounded-3xl p-8 md:p-12 border border-white/20 shadow-2xl">
-                        <div className="text-center md:text-left text-white max-w-2xl">
-                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 rounded-full text-sm font-semibold mb-6">
-                                <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-                                Insurance & TPA Services
+                    <h2 className="section-title">Hospital <span className="gradient-text">Gallery</span></h2>
+                    <p className="section-subtitle">
+                        A glimpse into our facilities, wards, and care environment
+                    </p>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+                        {galleryPhotos.map((photo, idx) => (
+                            <div
+                                key={idx}
+                                className="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 bg-gray-100"
+                                style={{ aspectRatio: "3/2" }}
+                            >
+                                <Image
+                                    src={photo.src}
+                                    alt={photo.label}
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                />
+                                {/* Single always-visible label */}
+                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-3 py-3">
+                                    <span className="text-white text-sm font-semibold">{photo.label}</span>
+                                </div>
                             </div>
-                            <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">Cashless Treatment Available</h2>
-                            <p className="text-sky-50 text-lg md:text-xl">
-                                We are empaneled with major health insurance companies and TPAs. Our dedicated helpdesk ensures a smooth, hassle-free cashless hospitalization experience.
-                            </p>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* TPA Helpdesk Section */}
+            <section id="tpa" className="section bg-gradient-to-br from-sky-600 to-teal-600 py-14 md:py-20 relative overflow-hidden">
+                <div className="absolute inset-0 bg-[radial-gradient(#ffffff80_1px,transparent_1px)] [background-size:20px_20px] opacity-20" />
+                <div className="blob absolute -top-20 -left-20 opacity-20" />
+                <div className="container relative z-10 space-y-10">
+
+                    {/* Header */}
+                    <div className="text-center text-white">
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full text-sm font-semibold mb-5">
+                            <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                            Insurance &amp; TPA Services
                         </div>
-                        <div className="flex-shrink-0">
-                            <a href="tel:+918954155336" className="group flex items-center gap-4 bg-white text-slate-800 p-4 md:p-6 rounded-2xl hover:bg-slate-50 transition-all shadow-xl hover:-translate-y-1 border-2 border-transparent hover:border-sky-200">
-                                <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4">Cashless Treatment Available</h2>
+                        <p className="text-sky-100 text-base md:text-xl max-w-2xl mx-auto">
+                            We are empaneled with major health insurance companies and TPAs. Our dedicated helpdesk ensures a smooth, hassle-free cashless hospitalization experience.
+                        </p>
+                    </div>
+
+                    {/* Ayushman Bharat Card - Government Scheme */}
+                    <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-3xl p-6 md:p-8 shadow-2xl border border-amber-300/50 flex flex-col md:flex-row items-center gap-6">
+                        <div className="flex-shrink-0 w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center text-5xl shadow-inner">
+                            🏛️
+                        </div>
+                        <div className="text-white text-center md:text-left flex-1">
+                            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/25 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                                🇮🇳 Government Scheme
+                            </div>
+                            <h3 className="text-2xl md:text-3xl font-extrabold mb-1">Ayushman Bharat – PMJAY</h3>
+                            <p className="text-amber-100 text-sm md:text-base max-w-lg">
+                                We are an <strong>empaneled hospital</strong> under the Pradhan Mantri Jan Arogya Yojana (PM-JAY). Eligible families can avail up to <strong>₹5 Lakh</strong> per year in free healthcare coverage for secondary and tertiary treatments.
+                            </p>
+                            <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
+                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 rounded-full text-xs font-semibold">✅ Up to ₹5 Lakh/year</span>
+                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 rounded-full text-xs font-semibold">✅ 100% Cashless</span>
+                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 rounded-full text-xs font-semibold">✅ No Premium to Pay</span>
+                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 rounded-full text-xs font-semibold">✅ 1500+ Treatments Covered</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Insurance Partners */}
+                    <div>
+                        <h3 className="text-white text-xl md:text-2xl font-bold text-center mb-6">Our Empaneled Insurance Partners</h3>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                            {[
+                                { name: "Star Health", icon: "⭐", color: "from-red-50 to-red-100", border: "border-red-200" },
+                                { name: "HDFC Ergo", icon: "🏦", color: "from-blue-50 to-blue-100", border: "border-blue-200" },
+                                { name: "New India Assurance", icon: "🛡️", color: "from-green-50 to-green-100", border: "border-green-200" },
+                                { name: "United India", icon: "🌐", color: "from-purple-50 to-purple-100", border: "border-purple-200" },
+                                { name: "National Insurance", icon: "🏛️", color: "from-orange-50 to-orange-100", border: "border-orange-200" },
+                                { name: "Oriental Insurance", icon: "💎", color: "from-teal-50 to-teal-100", border: "border-teal-200" },
+                            ].map((partner) => (
+                                <div key={partner.name} className={`bg-gradient-to-br ${partner.color} border ${partner.border} rounded-2xl p-4 text-center shadow-md hover:-translate-y-1 hover:shadow-lg transition-all duration-200`}>
+                                    <div className="text-3xl mb-2">{partner.icon}</div>
+                                    <div className="text-slate-700 font-semibold text-xs md:text-sm leading-tight">{partner.name}</div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* TPA Partners + Helpdesk CTA */}
+                    <div className="flex flex-col md:flex-row gap-6">
+                        {/* TPA Description */}
+                        <div className="flex-1 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                            <h3 className="text-white text-lg font-bold mb-3 flex items-center gap-2">🤝 What is a TPA?</h3>
+                            <p className="text-sky-100 text-sm leading-relaxed mb-4">
+                                A <strong className="text-white">Third Party Administrator (TPA)</strong> is an IRDAI-licensed entity that acts as an intermediary between you, the hospital, and your insurance company. Our expert TPA helpdesk manages pre-authorization, claim processing, and discharge formalities on your behalf — making cashless treatment seamless.
+                            </p>
+                            <div className="space-y-2">
+                                {["Pre-Authorization within 2 hours", "Seamless claim documentation", "No hidden charges", "Dedicated relationship manager"].map(pt => (
+                                    <div key={pt} className="flex items-center gap-2 text-sky-100 text-sm">
+                                        <span className="w-5 h-5 rounded-full bg-green-400/20 text-green-300 flex items-center justify-center text-xs flex-shrink-0">✓</span>
+                                        {pt}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Cashless Process Steps */}
+                        <div className="flex-1 bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20">
+                            <h3 className="text-white text-lg font-bold mb-3 flex items-center gap-2">⚡ Cashless Process</h3>
+                            <div className="space-y-3">
+                                {[
+                                    { step: "1", text: "Present your insurance card at TPA helpdesk" },
+                                    { step: "2", text: "Pre-authorization sent to insurer" },
+                                    { step: "3", text: "Treatment begins on approval" },
+                                    { step: "4", text: "Discharge with minimal paperwork" },
+                                ].map(item => (
+                                    <div key={item.step} className="flex items-center gap-3">
+                                        <div className="w-7 h-7 rounded-full bg-white/20 text-white font-bold text-sm flex items-center justify-center flex-shrink-0">{item.step}</div>
+                                        <p className="text-sky-100 text-sm">{item.text}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Contact CTA */}
+                        <div className="flex-shrink-0 flex flex-col gap-4 justify-center">
+                            <a href="tel:+918954155336" className="group flex items-center gap-4 bg-white text-slate-800 p-4 md:p-5 rounded-2xl hover:bg-slate-50 transition-all shadow-xl hover:-translate-y-1 border-2 border-transparent hover:border-sky-200">
+                                <div className="w-11 h-11 bg-sky-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
                                     <span className="text-xl">📞</span>
                                 </div>
                                 <div className="text-left">
-                                    <div className="text-xs md:text-sm text-slate-500 font-medium mb-1 tracking-wider uppercase">TPA Helpdesk</div>
-                                    <div className="text-xl md:text-2xl font-black text-sky-600 tracking-tight">+91 8954155336</div>
+                                    <div className="text-xs text-slate-500 font-medium mb-0.5 uppercase tracking-wider">TPA Helpdesk</div>
+                                    <div className="text-lg font-black text-sky-600">+91 8954155336</div>
                                 </div>
+                            </a>
+                            <a
+                                href="#contact"
+                                className="group flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 text-white font-bold px-6 py-3.5 rounded-2xl border border-white/30 transition-all hover:-translate-y-1 shadow-lg text-sm"
+                            >
+                                Know More About
+                                <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
                             </a>
                         </div>
                     </div>
+
                 </div>
             </section>
 
@@ -479,7 +719,7 @@ export default function Home() {
                                     <div className="text-xl">📞</div>
                                     <div>
                                         <h4 className="font-bold text-sm">Phone</h4>
-                                        <p className="text-gray-600 text-sm">+91 98765 43210</p>
+                                        <p className="text-gray-600 text-sm">+91 90390 67378</p>
                                     </div>
                                 </div>
                                 <div className="card !p-4 flex items-center gap-3">
@@ -680,7 +920,7 @@ export default function Home() {
                                                         setChatMessages(prev => [...prev, { role: "assistant", content: data.reply }]);
                                                     })
                                                     .catch(() => {
-                                                        setChatMessages(prev => [...prev, { role: "assistant", content: "Please call +91 98765 43210." }]);
+                                                        setChatMessages(prev => [...prev, { role: "assistant", content: "Please call +91 90390 67378." }]);
                                                     })
                                                     .finally(() => {
                                                         setIsLoading(false);
@@ -762,7 +1002,7 @@ export default function Home() {
                 {/* WhatsApp Floating Icon */}
                 {!isChatOpen && (
                     <a
-                        href="https://wa.me/919876543210"
+                        href="https://wa.me/918954185965"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-[#25D366] text-white w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform"
