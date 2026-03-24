@@ -3,62 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 
-const services: { image: string | null; title: string; desc: string; icon?: string }[] = [
-    { image: "/images/services/general-medicine.png", title: "General Medicine", desc: "Comprehensive healthcare for adults with expert diagnosis and treatment" },
-    { image: "/images/services/pediatrics.png", title: "Pediatrics", desc: "Specialized care for infants, children, and adolescents" },
-    { image: "/images/services/inhouse-pharmacy.png", title: "Inhouse Pharmacy", desc: "Fully stocked 24/7 pharmacy ensuring timely access to all critical and prescribed medicines" },
-    { image: "/images/services/laboratory.png", title: "Laboratory", desc: "State-of-the-art diagnostic testing and pathology services" },
-    { image: "/images/services/vaccination.png", title: "Vaccination", desc: "Complete immunization programs for all age groups" },
-    { image: "/images/services/health-checkup.png", title: "Health Checkup", desc: "Preventive health screenings and wellness programs" },
-    { image: "/images/services/operation.png", title: "Operation Theater (OT)", desc: "Fully equipped, advanced surgical suites ensuring maximum patient safety" },
-    { image: "/images/services/x-ray-imaging.png", title: "X-Ray Imaging", desc: "High-resolution digital X-ray services for swift and accurate diagnosis" },
-    { image: "/images/services/ultrasound.png", title: "Ultrasound (3D, 4D)", desc: "Detailed 3D/4D ultrasound imaging for comprehensive obstetrical and general health screening" },
-];
-
-const doctors: { name: string; role: string; exp?: string; specialty?: string; tag?: string; credentials?: string[]; memberOf?: string; formerlyAt?: string }[] = [
-    { name: "Late Dr. K.C. Gupta", role: "Founder" },
-    {
-        name: "Dr. Sachin Gupta",
-        role: "Consultant Physician",
-        tag: "Chairman",
-        exp: "15+ years",
-        credentials: ["MBBS", "DEM (Medicine)", "Royal College, England (UK)", "FAGE (Mpl)", "MCCP (USA)"],
-        specialty: "Specialist In: Chest, Heart, Abdominal Diseases & Diabetes",
-        memberOf: "Prof. Member: American Diabetes Association",
-        formerlyAt: "Formerly at: Indraprastha Apollo Hospital, New Delhi",
-    },
-    { name: "Dr. Shweta Gupta (MBBS)", role: "Gynecology & Obstetrics", exp: "8+ years", specialty: "Infertility Specialist" },
-    { name: "Dr. Gajal Gupta (MBBS, MD)", role: "Consultant Psychiatrist", exp: "5+ years" },
-];
-
-const galleryPhotos = [
-    { src: "/images/gallery/gallery-1.png", label: "Hospital Building" },
-    { src: "/images/gallery/Gallery-2.png", label: "Laboratory" },
-    { src: "/images/gallery/gallery-3.png", label: "Reception Desk" },
-    { src: "/images/gallery/Gallery-4.png", label: "Consultation Room" },
-    { src: "/images/gallery/Gallery-5.png", label: "Patient Waiting Area" },
-    { src: "/images/gallery/gallery-6.png", label: "Private Ward Room" },
-    { src: "/images/gallery/Gallery-7.png", label: "Deluxe Room" },
-    { src: "/images/gallery/ot entrance.jpg", label: "OT Entrance" },
-];
-
-const testimonials = [
-    { name: "Ravi Kumar", text: "Excellent care and compassionate staff. The doctors truly listen to your concerns.", rating: 5 },
-    { name: "Meena Agarwal", text: "Best hospital experience in Gajraula. Clean facilities and professional treatment throughout.", rating: 5 },
-    { name: "Suresh Yadav", text: "Emergency team saved my mother's life. Forever grateful to Dr. K.C. Memorial Gupta Hospital.", rating: 5 },
-];
-
-const navLinks = [
-    { href: "#home", label: "Home" },
-    { href: "#about", label: "About" },
-    { href: "#services", label: "Services" },
-    { href: "#rooms", label: "Rooms" },
-    { href: "#doctors", label: "Doctors" },
-    { href: "#gallery", label: "Gallery" },
-    { href: "#testimonials", label: "Testimonials" },
-    { href: "#tpa", label: "TPA Helpdesk" },
-    { href: "#contact", label: "Contact" },
-];
+import { services, doctors, galleryPhotos, testimonials, navLinks } from "@/lib/data";
 
 export default function Home() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -69,6 +14,8 @@ export default function Home() {
     ]);
     const [chatInput, setChatInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [formStatus, setFormStatus] = useState<{ type: 'success' | 'error', message: string } | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const chatInputRef = useRef<HTMLInputElement>(null);
 
     // Auto-open chatbot after 2.5s with a beep — only once per session
@@ -101,10 +48,19 @@ export default function Home() {
         return () => clearTimeout(timer);
     }, []);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        alert("Thank you for your message! We will contact you soon.");
+        setIsSubmitting(true);
+        setFormStatus(null);
+        
+        // Simulate API call
+        await new Promise(r => setTimeout(r, 1500));
+        
+        setFormStatus({ type: 'success', message: "Appointment request sent! We'll call you shortly." });
         setFormData({ name: "", email: "", phone: "", message: "" });
+        setIsSubmitting(false);
+        
+        setTimeout(() => setFormStatus(null), 5000);
     };
 
     const sendMessage = async () => {
@@ -137,6 +93,41 @@ export default function Home() {
         }
     };
 
+    const [selectedPhoto, setSelectedPhoto] = useState<{ src: string, label: string } | null>(null);
+    const [activeSection, setActiveSection] = useState("home");
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const [showScrollTop, setShowScrollTop] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            // Scroll Progress
+            const totalScroll = document.documentElement.scrollTop;
+            const windowHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            setScrollProgress(windowHeight > 0 ? (totalScroll / windowHeight) * 100 : 0);
+
+            // Active Section Tracking
+            const sections = navLinks.map(link => link.href.substring(1));
+            const currentSection = sections.find(section => {
+                const el = document.getElementById(section);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    return rect.top <= 150 && rect.bottom >= 150;
+                }
+                return false;
+            });
+            if (currentSection) setActiveSection(currentSection);
+            
+            // Scroll Top Button visibility
+            setShowScrollTop(window.scrollY > 400);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
     const clearChat = () => {
         setChatMessages([{ role: "assistant", content: "Hello! How can I help you today?" }]);
         setChatInput("");
@@ -144,82 +135,100 @@ export default function Home() {
     };
 
     return (
-        <div className="overflow-x-hidden w-full">
+        <div className="overflow-x-hidden w-full min-h-screen bg-white">
+            {/* Top Scroll Progress Bar */}
+            <div 
+                className="fixed top-0 left-0 h-1 bg-gradient-to-r from-sky-400 to-teal-400 z-[100] transition-all duration-300" 
+                style={{ width: `${scrollProgress}%` }}
+            />
+            
+            <header>
             {/* Navigation */}
             <nav className="fixed top-0 left-0 right-0 z-50 glass shadow-sm">
-                <div className="container">
-                    <div className="flex items-center justify-between h-16 md:h-20 w-full">
-                        <a href="#home" className="flex items-center gap-2 lg:gap-3 group shrink-0">
-                            <Image src="/images/logo-new.svg" alt="Logo Icon" width={48} height={48} className="h-10 md:h-12 w-auto group-hover:scale-110 transition-transform" />
-                            <div className="flex flex-col justify-center text-left">
-                                <span className="text-gray-500 font-bold text-[10px] md:text-xs uppercase tracking-widest leading-none mb-0.5">Dr. K.C. Memorial</span>
-                                <span className="text-sky-600 font-black text-lg md:text-xl tracking-tighter leading-none whitespace-nowrap">Gupta Hospital</span>
-                            </div>
-                        </a>
+                {/* Full-width row — logos touch the edges, menu fills the middle */}
+                <div className="flex items-center h-20 md:h-24 w-full px-3 md:px-4">
+                    {/* Logo Left — flush to left edge */}
+                    <a href="#home" className="flex items-center gap-2 lg:gap-3 group shrink-0">
+                        <Image src="/images/logo-1.png" alt="Hospital Logo Left" width={60} height={60} className="h-12 md:h-16 w-auto object-contain group-hover:scale-110 transition-transform" />
+                        <div className="flex flex-col justify-center text-left">
+                            <span className="text-gray-500 font-bold text-[11px] md:text-sm uppercase tracking-widest leading-none mb-0.5">Dr. K.C. Memorial</span>
+                            <span className="text-sky-600 font-black text-2xl md:text-3xl tracking-tighter leading-none whitespace-nowrap">Gupta Hospital</span>
+                        </div>
+                    </a>
 
-                        {/* Desktop Menu */}
-                        <div className="hidden lg:flex items-center justify-end flex-1 gap-4 xl:gap-6 text-sm lg:text-[13px] xl:text-sm font-medium ml-8 overflow-hidden">
-                            {navLinks.map((link) => (
-                                <a
-                                    key={link.href}
-                                    href={link.href}
-                                    className="text-slate-700 hover:text-sky-500 transition-colors whitespace-nowrap"
-                                >
-                                    {link.label}
-                                </a>
-                            ))}
-                            <a href="#contact" className="btn btn-primary text-sm py-2 px-5 whitespace-nowrap shrink-0 shadow-md hover:shadow-lg transition-all ml-2">
+                    {/* Desktop Menu — fills middle space */}
+                    <div className="hidden lg:flex items-center justify-end flex-1 gap-4 xl:gap-5 text-base lg:text-[15px] xl:text-base font-semibold px-6 overflow-hidden">
+                        {navLinks.map((link) => (
+                            <a
+                                key={link.href}
+                                href={link.href}
+                                className={`transition-all duration-300 whitespace-nowrap relative py-1 hover:text-sky-500 ${activeSection === link.href.substring(1) ? 'text-sky-600 font-bold' : 'text-slate-600 font-semibold'}`}
+                            >
+                                {link.label}
+                                {activeSection === link.href.substring(1) && (
+                                    <span className="absolute bottom-0 left-0 w-full h-0.5 bg-sky-500 rounded-full animate-fadeIn" />
+                                )}
+                            </a>
+                        ))}
+                        <a href="#contact" className="btn btn-primary text-sm py-2 px-5 whitespace-nowrap shrink-0 shadow-md hover:shadow-lg transition-all ml-1 group">
+                            Book Appointment
+                            <svg className="w-4 h-4 ml-1.5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </a>
+                    </div>
+
+
+
+                    {/* Mobile Menu Button */}
+                    <button
+                        className="lg:hidden p-2 ml-auto"
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        aria-label="Toggle menu"
+                    >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            {mobileMenuOpen ? (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            ) : (
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                            )}
+                        </svg>
+                    </button>
+                </div>
+
+                {/* Mobile Menu */}
+                {mobileMenuOpen && (
+                    <div className="lg:hidden py-4 border-t border-gray-100 flex flex-col gap-2 px-4 bg-white/95 backdrop-blur-md animate-fadeIn">
+                        {navLinks.map((link) => (
+                            <a
+                                key={link.href}
+                                href={link.href}
+                                className="block py-2 text-gray-600 hover:text-sky-500 font-medium transition-colors"
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                {link.label}
+                            </a>
+                        ))}
+                        <div className="pt-2 mt-2 border-t border-gray-50">
+                            <a
+                                href="#contact"
+                                onClick={() => setMobileMenuOpen(false)}
+                                className="btn btn-primary w-full justify-center text-sm py-2.5"
+                            >
                                 Book Appointment
                             </a>
                         </div>
-
-                        {/* Mobile Menu Button */}
-                        <button
-                            className="lg:hidden p-2"
-                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                            aria-label="Toggle menu"
-                        >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                {mobileMenuOpen ? (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                ) : (
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                                )}
-                            </svg>
-                        </button>
                     </div>
-
-                    {/* Mobile Menu */}
-                    {mobileMenuOpen && (
-                        <div className="lg:hidden py-4 border-t border-gray-100 flex flex-col gap-2">
-                            {navLinks.map((link) => (
-                                <a
-                                    key={link.href}
-                                    href={link.href}
-                                    className="block py-2 text-gray-600 hover:text-sky-500 font-medium"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                >
-                                    {link.label}
-                                </a>
-                            ))}
-                            <div className="pt-2 mt-2 border-t border-gray-50">
-                                <a
-                                    href="#contact"
-                                    onClick={() => setMobileMenuOpen(false)}
-                                    className="btn btn-primary w-full justify-center text-sm py-2.5"
-                                >
-                                    Book Appointment
-                                </a>
-                            </div>
-                        </div>
-                    )}
-                </div>
+                )}
             </nav>
+            </header>
+
+            <main id="main-content">
 
             {/* Hero Section */}
             <section
                 id="home"
-                className="min-h-fit lg:min-h-screen flex items-start lg:items-center pt-20 pb-8 lg:py-20 relative overflow-hidden bg-gradient-to-br from-sky-50 via-white to-teal-50"
+                className="min-h-fit lg:min-h-screen flex items-start lg:items-center pt-28 md:pt-32 pb-8 lg:pb-20 relative overflow-hidden bg-gradient-to-br from-sky-50 via-white to-teal-50"
             >
                 {/* Decorative Elements */}
                 <div className="hidden lg:block absolute top-20 right-0 w-[500px] h-[500px] bg-gradient-to-br from-sky-200/40 to-teal-200/40 rounded-full blur-3xl" />
@@ -280,6 +289,7 @@ export default function Home() {
                                     alt="Dr. K.C. Memorial Gupta Hospital"
                                     width={600}
                                     height={400}
+                                    priority
                                     className="w-full h-auto rounded-2xl lg:rounded-3xl shadow-xl lg:shadow-2xl shadow-sky-200/50"
                                 />
                                 {/* Floating Badge - Hidden on mobile */}
@@ -389,7 +399,7 @@ export default function Home() {
                                     </div>
                                 ) : (
                                     <div className="w-full h-48 bg-gradient-to-br from-sky-50 to-teal-50 flex items-center justify-center text-6xl border-b border-gray-100">
-                                        {service.icon}
+                                        🏥
                                     </div>
                                 )}
                                 <div className="p-5 flex-1 flex flex-col">
@@ -413,22 +423,35 @@ export default function Home() {
 
                     <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {[
-                            { name: "General Ward", desc: "Spacious and well-ventilated wards with continuous monitoring and dedicated nursing staff.", icon: "🏥", features: ["24/7 Nursing", "Ventilated", "Affordable Care"] },
-                            { name: "Private Ward", desc: "Comfortable private rooms available with AC and Non-AC options for patient privacy.", icon: "🛏️", features: ["AC / Non-AC", "Attendant Bed", "Attached Bath"] },
-                            { name: "Deluxe Room", desc: "Premium rooms equipped with modern amenities, TV, and a relaxing environment.", icon: "🌟", features: ["Fully AC", "TV & WiFi", "Premium Care"] },
-                            { name: "ICU", desc: "State-of-the-art Intensive Care Unit with advanced life support systems.", icon: "❤️‍🩹", features: ["Advanced Monitors", "1:1 Nursing Care", "Life Support"] },
+                            { name: "General Ward", desc: "Spacious and well-ventilated wards with continuous monitoring and dedicated nursing staff.", icon: "🏥", image: "/images/general-ward.jpg", features: ["24/7 Nursing", "Ventilated", "Affordable Care"] },
+                            { name: "Private Ward", desc: "Comfortable private rooms available with AC and Non-AC options for patient privacy.", icon: "🛏️", image: "/images/private-room.jpg", features: ["AC / Non-AC", "Attendant Bed", "Attached Bath"] },
+                            { name: "Deluxe Room", desc: "Premium rooms equipped with modern amenities, TV, and a relaxing environment.", icon: "🌟", image: "/images/deluxe-room.jpg", features: ["Fully AC", "TV & WiFi", "Premium Care"] },
+                            { name: "ICU", desc: "State-of-the-art Intensive Care Unit with advanced life support systems.", icon: "❤️‍🩹", image: "/images/icu.jpg", features: ["Advanced Monitors", "1:1 Nursing Care", "Life Support"] },
                         ].map((room) => (
-                            <div key={room.name} className="card group hover:-translate-y-2 transition-transform duration-300 border border-gray-100 hover:border-sky-200 hover:shadow-xl hover:shadow-sky-100 flex flex-col bg-white">
-                                <div className="text-4xl mb-4 p-4 bg-gradient-to-br from-sky-50 to-teal-50 rounded-2xl inline-block group-hover:scale-110 transition-transform self-start shadow-sm border border-sky-100">{room.icon}</div>
-                                <h3 className="text-xl font-bold mb-3">{room.name}</h3>
-                                <p className="text-gray-600 text-sm mb-5 flex-1">{room.desc}</p>
-                                <ul className="space-y-2 mt-auto pt-4 border-t border-gray-50">
-                                    {room.features.map((feature, i) => (
-                                        <li key={i} className="flex items-center gap-2 text-sm text-slate-700 font-medium">
-                                            <span className="w-5 h-5 rounded-full bg-teal-50 text-teal-500 flex items-center justify-center text-xs">✓</span> {feature}
-                                        </li>
-                                    ))}
-                                </ul>
+                            <div key={room.name} className="card group hover:-translate-y-2 transition-transform duration-300 border border-gray-100 hover:border-sky-200 hover:shadow-xl hover:shadow-sky-100 flex flex-col bg-white !p-0 overflow-hidden">
+                                <div className="relative w-full h-48 overflow-hidden">
+                                    <Image
+                                        src={room.image}
+                                        alt={room.name}
+                                        fill
+                                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                                    />
+                                    <div className="absolute top-3 left-3 px-3 py-1.5 bg-white/90 backdrop-blur-sm rounded-xl shadow-sm border border-sky-100 text-xl">
+                                        {room.icon}
+                                    </div>
+                                </div>
+                                <div className="p-5 flex-1 flex flex-col">
+                                    <h3 className="text-xl font-bold mb-3">{room.name}</h3>
+                                    <p className="text-gray-600 text-sm mb-5 flex-1">{room.desc}</p>
+                                    <ul className="space-y-2 mt-auto pt-4 border-t border-gray-50">
+                                        {room.features.map((feature, i) => (
+                                            <li key={i} className="flex items-center gap-2 text-sm text-slate-700 font-medium">
+                                                <span className="w-5 h-5 rounded-full bg-teal-50 text-teal-500 flex items-center justify-center text-xs">✓</span> {feature}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -549,28 +572,70 @@ export default function Home() {
                         A glimpse into our facilities, wards, and care environment
                     </p>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
                         {galleryPhotos.map((photo, idx) => (
                             <div
                                 key={idx}
-                                className="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 bg-gray-100"
-                                style={{ aspectRatio: "3/2" }}
+                                onClick={() => setSelectedPhoto(photo)}
+                                className="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 bg-gray-100 cursor-zoom-in"
+                                style={{ aspectRatio: "4/3" }}
                             >
                                 <Image
                                     src={photo.src}
                                     alt={photo.label}
                                     fill
                                     className="object-cover group-hover:scale-105 transition-transform duration-500"
-                                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                                 />
-                                {/* Single always-visible label */}
-                                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent px-3 py-3">
-                                    <span className="text-white text-sm font-semibold">{photo.label}</span>
+                                {/* Label overlay */}
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+                                <div className="absolute bottom-0 left-0 right-0 p-5 transform translate-y-1 group-hover:translate-y-0 transition-transform">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-white text-base font-bold drop-shadow-md">{photo.label}</span>
+                                        <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white scale-0 group-hover:scale-100 transition-transform">
+                                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
+
+                {/* Gallery Lightbox Modal */}
+                {selectedPhoto && (
+                    <div 
+                        className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-slate-900/90 backdrop-blur-xl animate-fadeIn"
+                        onClick={() => setSelectedPhoto(null)}
+                    >
+                        <button 
+                            className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors bg-white/10 p-3 rounded-full"
+                            onClick={() => setSelectedPhoto(null)}
+                        >
+                            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        
+                        <div 
+                            className="relative max-w-5xl w-full h-[80vh]"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <Image
+                                src={selectedPhoto.src}
+                                alt={selectedPhoto.label}
+                                fill
+                                className="object-contain"
+                                priority
+                            />
+                            <div className="absolute -bottom-12 left-0 right-0 text-center">
+                                <h3 className="text-white text-xl font-bold">{selectedPhoto.label}</h3>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </section>
 
             {/* TPA Helpdesk Section */}
@@ -618,16 +683,86 @@ export default function Home() {
                         <h3 className="text-white text-xl md:text-2xl font-bold text-center mb-6">Our Empaneled Insurance Partners</h3>
                         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
                             {[
-                                { name: "Star Health", icon: "⭐", color: "from-red-50 to-red-100", border: "border-red-200" },
-                                { name: "HDFC Ergo", icon: "🏦", color: "from-blue-50 to-blue-100", border: "border-blue-200" },
-                                { name: "New India Assurance", icon: "🛡️", color: "from-green-50 to-green-100", border: "border-green-200" },
-                                { name: "United India", icon: "🌐", color: "from-purple-50 to-purple-100", border: "border-purple-200" },
-                                { name: "National Insurance", icon: "🏛️", color: "from-orange-50 to-orange-100", border: "border-orange-200" },
-                                { name: "Oriental Insurance", icon: "💎", color: "from-teal-50 to-teal-100", border: "border-teal-200" },
+                                { 
+                                    name: "Star Health", 
+                                    logo: (
+                                        <svg viewBox="0 0 100 30" className="h-full w-auto">
+                                            <path d="M15 5l1.5 4h4l-3 2.5 1.2 4.5-3.7-3-3.7 3 1.2-4.5-3-2.5h4z" fill="#004A95"/>
+                                            <text x="35" y="20" fontFamily="Arial" fontWeight="900" fontSize="12" fill="#004A95">STAR</text>
+                                            <text x="35" y="27" fontFamily="Arial" fontSize="5" fill="#004A95">HEALTH INSURANCE</text>
+                                        </svg>
+                                    ),
+                                    color: "from-blue-50 to-blue-100", 
+                                    border: "border-blue-200" 
+                                },
+                                { 
+                                    name: "HDFC Ergo", 
+                                    logo: (
+                                        <svg viewBox="0 0 100 30" className="h-full w-auto">
+                                            <rect width="100" height="30" rx="4" fill="#ED1C24"/>
+                                            <text x="50" y="19" textAnchor="middle" fontFamily="Arial" fontWeight="900" fontSize="11" fill="white">HDFC ERGO</text>
+                                        </svg>
+                                    ),
+                                    color: "from-red-50 to-red-100", 
+                                    border: "border-red-200" 
+                                },
+                                { 
+                                    name: "New India Assurance", 
+                                    logo: (
+                                        <svg viewBox="0 0 100 30" className="h-full w-auto">
+                                            <circle cx="15" cy="15" r="12" fill="#003580"/>
+                                            <text x="15" y="18" textAnchor="middle" fontFamily="Arial" fontWeight="bold" fontSize="8" fill="white">NIA</text>
+                                            <text x="32" y="15" fontFamily="Arial" fontWeight="bold" fontSize="7" fill="#003580">NEW INDIA</text>
+                                            <text x="32" y="22" fontFamily="Arial" fontSize="5" fill="#003580">ASSURANCE</text>
+                                        </svg>
+                                    ),
+                                    color: "from-blue-50 to-indigo-100", 
+                                    border: "border-blue-200" 
+                                },
+                                { 
+                                    name: "United India", 
+                                    logo: (
+                                        <svg viewBox="0 0 100 30" className="h-full w-auto">
+                                            <path d="M10 5l10 10-10 10" stroke="#F58220" strokeWidth="4" fill="none"/>
+                                            <path d="M20 5l10 10-10 10" stroke="#0054A6" strokeWidth="4" fill="none"/>
+                                            <text x="35" y="19" fontFamily="Arial" fontWeight="bold" fontSize="10" fill="#0054A6">UNITED INDIA</text>
+                                        </svg>
+                                    ),
+                                    color: "from-orange-50 to-blue-50", 
+                                    border: "border-orange-200" 
+                                },
+                                { 
+                                    name: "National Insurance", 
+                                    logo: (
+                                        <svg viewBox="0 0 100 30" className="h-full w-auto">
+                                            <circle cx="15" cy="15" r="10" stroke="#0054A6" strokeWidth="2" fill="none"/>
+                                            <rect x="12" y="10" width="6" height="10" fill="#ED1C24"/>
+                                            <text x="30" y="19" fontFamily="Arial" fontWeight="bold" fontSize="9" fill="#0054A6">NATIONAL INSURANCE</text>
+                                        </svg>
+                                    ),
+                                    color: "from-gray-50 to-blue-50", 
+                                    border: "border-gray-200" 
+                                },
+                                { 
+                                    name: "Oriental Insurance", 
+                                    logo: (
+                                        <svg viewBox="0 0 100 30" className="h-full w-auto">
+                                            <path d="M5 15h20M15 5v20" stroke="#003580" strokeWidth="2"/>
+                                            <circle cx="15" cy="15" r="12" stroke="#003580" strokeWidth="1" fill="none"/>
+                                            <text x="32" y="19" fontFamily="Arial" fontWeight="bold" fontSize="9" fill="#003580">ORIENTAL INSURANCE</text>
+                                        </svg>
+                                    ),
+                                    color: "from-teal-50 to-blue-100", 
+                                    border: "border-blue-200" 
+                                },
                             ].map((partner) => (
-                                <div key={partner.name} className={`bg-gradient-to-br ${partner.color} border ${partner.border} rounded-2xl p-4 text-center shadow-md hover:-translate-y-1 hover:shadow-lg transition-all duration-200`}>
-                                    <div className="text-3xl mb-2">{partner.icon}</div>
-                                    <div className="text-slate-700 font-semibold text-xs md:text-sm leading-tight">{partner.name}</div>
+                                <div key={partner.name} className={`bg-gradient-to-br ${partner.color} border ${partner.border} rounded-2xl p-4 flex flex-col items-center justify-center gap-2 shadow-md hover:-translate-y-1 hover:shadow-lg transition-all duration-200 h-24`}>
+                                    <div className="h-10 w-full flex items-center justify-center">
+                                        {partner.logo}
+                                    </div>
+                                    <div className="text-slate-700 font-bold text-[10px] uppercase tracking-tighter text-center leading-none">
+                                        {partner.name}
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -779,13 +914,28 @@ export default function Home() {
                                 onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                                 className="w-full p-3 rounded-lg border border-gray-200 focus:border-sky-500 focus:outline-none transition-colors resize-none flex-1 min-h-[100px]"
                             />
-                            <button type="submit" className="btn btn-primary w-full">
-                                Send Message
+                             <button 
+                                type="submit" 
+                                disabled={isSubmitting}
+                                className="btn btn-primary w-full disabled:opacity-70 flex items-center justify-center gap-2"
+                            >
+                                {isSubmitting ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        Processing...
+                                    </>
+                                ) : "Send Message"}
                             </button>
+                            {formStatus && (
+                                <div className={`p-3 rounded-lg text-sm text-center animate-fadeIn ${formStatus.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                    {formStatus.message}
+                                </div>
+                            )}
                         </form>
                     </div>
                 </div>
             </section>
+            </main>
 
             {/* Footer */}
             <footer className="bg-slate-950 text-white py-12 md:py-16 relative overflow-hidden border-t border-white/5">
@@ -794,7 +944,7 @@ export default function Home() {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8 text-center sm:text-left">
                         <div className="sm:col-span-2 lg:col-span-1">
                             <div className="flex items-center gap-2 lg:gap-3 mb-4 justify-center sm:justify-start">
-                                <Image src="/images/logo-new.svg" alt="Logo Icon" width={40} height={40} className="h-10 w-auto" />
+                                <Image src="/images/logo-1.png" alt="Hospital Logo" width={50} height={50} className="h-12 w-auto object-contain" />
                                 <div className="flex flex-col justify-center text-left">
                                     <span className="text-gray-400 font-bold text-[10px] uppercase tracking-widest leading-none mb-0.5">Dr. K.C. Memorial</span>
                                     <span className="text-sky-400 font-black text-lg tracking-tighter leading-none whitespace-nowrap">Gupta Hospital</span>
@@ -1013,6 +1163,28 @@ export default function Home() {
                         </svg>
                     </a>
                 )}
+
+                {/* Mobile Call Icon */}
+                <a
+                    href="tel:+919039067378"
+                    className="lg:hidden bg-sky-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 rotate-12 transition-all"
+                    aria-label="Call Hospital"
+                >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    </svg>
+                </a>
+
+                {/* Scroll To Top Button */}
+                <button
+                    onClick={scrollToTop}
+                    className={`fixed bottom-20 left-4 sm:left-6 w-12 h-12 rounded-full bg-white/90 backdrop-blur-md shadow-2xl border border-sky-100 flex items-center justify-center transition-all duration-300 hover:bg-white group z-[9990] ${showScrollTop ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}
+                    aria-label="Scroll to top"
+                >
+                    <svg className="w-6 h-6 text-sky-500 group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                </button>
             </div>
         </div>
     );

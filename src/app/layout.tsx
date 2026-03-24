@@ -2,15 +2,28 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-    title: "Dr. K.C. Memorial Gupta Hospital | Gajraula, Uttar Pradesh",
+    metadataBase: new URL("https://guptahospital.co.in"),
+    title: {
+        default: "Dr. K.C. Memorial Gupta Hospital | Quality Healthcare in Gajraula",
+        template: "%s | Dr. K.C. Memorial Gupta Hospital",
+    },
     description: "Dr. K.C. Memorial Gupta Hospital in Gajraula, UP - 30 bed facility with state-of-the-art technology. Offering general medicine, pediatrics, emergency care, and more. Book your appointment today.",
-    keywords: "Dr K.C. Memorial Gupta Hospital, Gajraula hospital, Uttar Pradesh healthcare, medical services, emergency care, pediatrics, general medicine, hospital beds",
+    keywords: ["Dr K.C. Memorial Gupta Hospital", "Gajraula hospital", "Uttar Pradesh healthcare", "medical services", "emergency care", "pediatrics", "general medicine", "hospital beds"],
     authors: [{ name: "Dr. K.C. Memorial Gupta Hospital" }],
+    creator: "Dr. K.C. Memorial Gupta Hospital",
+    publisher: "Dr. K.C. Memorial Gupta Hospital",
+    formatDetection: {
+        email: false,
+        address: false,
+        telephone: false,
+    },
     openGraph: {
         title: "Dr. K.C. Memorial Gupta Hospital | Gajraula, UP",
         description: "Your trusted healthcare partner in Gajraula. 30 bed facility with advanced technology for quality patient care.",
-        type: "website",
+        url: "https://guptahospital.co.in",
+        siteName: "Dr. K.C. Memorial Gupta Hospital",
         locale: "en_IN",
+        type: "website",
     },
     twitter: {
         card: "summary_large_image",
@@ -20,6 +33,16 @@ export const metadata: Metadata = {
     robots: {
         index: true,
         follow: true,
+    },
+    alternates: {
+        canonical: "/",
+    },
+    icons: {
+        icon: [
+            { url: "/favicon.png", type: "image/png" },
+            { url: "/favicon.ico", sizes: "any" }
+        ],
+        apple: "/images/logo-1.png",
     },
 };
 
@@ -31,8 +54,6 @@ export default function RootLayout({
     return (
         <html lang="en">
             <head>
-                <link rel="icon" type="image/svg+xml" href="/images/logo-new.svg" />
-                <link rel="apple-touch-icon" href="/images/logo-new.svg" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <meta name="theme-color" content="#0ea5e9" />
                 <script
