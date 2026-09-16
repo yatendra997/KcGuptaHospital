@@ -85,7 +85,7 @@ export default function Home() {
         } catch {
             setChatMessages(prev => [...prev, {
                 role: "assistant",
-                content: "Sorry, having trouble. Please call +91 90390 67378."
+                content: "Sorry, having trouble. Please call +91 96390 67378."
             }]);
         } finally {
             setIsLoading(false);
@@ -467,13 +467,17 @@ export default function Home() {
                         Experienced and compassionate medical professionals
                     </p>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
+                    <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto items-stretch">
                         {doctors.map((doc) => (
                             <div key={doc.name} className="bg-white rounded-2xl border border-gray-100 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden">
                                 {/* Card Header */}
                                 <div className="bg-gradient-to-br from-sky-50 via-white to-teal-50 px-6 pt-6 pb-4 flex flex-col items-center border-b border-gray-100">
-                                    <div className="w-20 h-20 bg-gradient-to-br from-sky-100 to-teal-100 rounded-full flex items-center justify-center text-3xl border-4 border-white shadow-lg mb-3">
-                                        👨‍⚕️
+                                    <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg mb-3">
+                                        {doc.image ? (
+                                            <Image src={doc.image} alt={doc.name} width={96} height={96} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className="w-full h-full bg-gradient-to-br from-sky-100 to-teal-100 flex items-center justify-center text-3xl">👨‍⚕️</div>
+                                        )}
                                     </div>
                                     {doc.tag ? (
                                         <span className="inline-flex items-center gap-1 px-3 py-0.5 bg-gradient-to-r from-amber-400 to-orange-400 text-white text-[11px] font-bold rounded-full shadow-sm mb-2">
@@ -656,24 +660,70 @@ export default function Home() {
                         </p>
                     </div>
 
-                    {/* Ayushman Bharat Card - Government Scheme */}
-                    <div className="bg-gradient-to-r from-amber-400 to-orange-500 rounded-3xl p-6 md:p-8 shadow-2xl border border-amber-300/50 flex flex-col md:flex-row items-center gap-6">
-                        <div className="flex-shrink-0 w-20 h-20 bg-white/20 rounded-2xl flex items-center justify-center text-5xl shadow-inner">
-                            🏛️
-                        </div>
-                        <div className="text-white text-center md:text-left flex-1">
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/25 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
-                                🇮🇳 Government Scheme
+                    {/* Ayushman Bharat Card + Cashless Starburst Badge in Same Row */}
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
+                        {/* Ayushman Bharat Card - Government Scheme */}
+                        <div className="flex-1 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-500 rounded-3xl p-6 md:p-8 shadow-2xl border border-amber-300/50 flex flex-col md:flex-row items-center gap-6">
+                            <div className="flex-shrink-0 w-16 h-16 md:w-20 md:h-20 bg-white/20 rounded-2xl flex items-center justify-center text-4xl md:text-5xl shadow-inner">
+                                🏛️
                             </div>
-                            <h3 className="text-2xl md:text-3xl font-extrabold mb-1">Ayushman Bharat – PMJAY</h3>
-                            <p className="text-amber-100 text-sm md:text-base max-w-lg">
-                                We are an <strong>empaneled hospital</strong> under the Pradhan Mantri Jan Arogya Yojana (PM-JAY). Eligible families can avail up to <strong>₹5 Lakh</strong> per year in free healthcare coverage for secondary and tertiary treatments.
-                            </p>
-                            <div className="flex flex-wrap gap-3 mt-4 justify-center md:justify-start">
-                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 rounded-full text-xs font-semibold">✅ Up to ₹5 Lakh/year</span>
-                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 rounded-full text-xs font-semibold">✅ 100% Cashless</span>
-                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 rounded-full text-xs font-semibold">✅ No Premium to Pay</span>
-                                <span className="flex items-center gap-1.5 px-3 py-1.5 bg-white/20 rounded-full text-xs font-semibold">✅ 1500+ Treatments Covered</span>
+                            <div className="text-white text-center md:text-left flex-1">
+                                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/25 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                                    🇮🇳 Government Scheme
+                                </div>
+                                <h3 className="text-2xl md:text-3xl font-extrabold mb-1">Ayushman Bharat – PMJAY</h3>
+                                <p className="text-amber-100 text-sm md:text-base max-w-xl leading-relaxed">
+                                    We are an <strong>empaneled hospital</strong> under PM-JAY. Eligible families can avail up to <strong>₹5 Lakh</strong>/year free healthcare coverage.
+                                </p>
+                                <div className="flex flex-wrap gap-2 md:gap-3 mt-4 justify-center md:justify-start">
+                                    <span className="flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-xs font-semibold">✅ Up to ₹5 Lakh/yr</span>
+                                    <span className="flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-xs font-semibold">✅ 100% Cashless</span>
+                                    <span className="flex items-center gap-1.5 px-3 py-1 bg-white/20 rounded-full text-xs font-semibold">✅ 1500+ Treatments</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Attractive Starburst Badge on the Right */}
+                        <div className="flex-shrink-0 flex items-center justify-center">
+                            <div className="relative group">
+                                {/* Ambient Glow */}
+                                <div className="absolute inset-0 rounded-full bg-amber-400/30 blur-xl animate-pulse" />
+                                
+                                {/* Starburst Container */}
+                                <div
+                                    className="relative flex items-center justify-center shadow-2xl hover:scale-105 transition-transform duration-300"
+                                    style={{
+                                        clipPath: 'polygon(50% 0%, 63% 6%, 76% 2%, 82% 14%, 94% 17%, 94% 31%, 100% 40%, 96% 52%, 100% 64%, 93% 73%, 97% 85%, 85% 89%, 81% 100%, 68% 97%, 58% 100%, 50% 93%, 42% 100%, 32% 97%, 19% 100%, 15% 89%, 3% 85%, 7% 73%, 0% 64%, 4% 52%, 0% 40%, 6% 31%, 6% 17%, 18% 14%, 24% 2%, 37% 6%)',
+                                        width: '260px',
+                                        height: '260px',
+                                        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%)',
+                                        padding: '4px',
+                                    }}
+                                >
+                                    {/* Inner Starburst Frame with subtle border accent */}
+                                    <div
+                                        className="w-full h-full flex flex-col items-center justify-center text-center p-6 border border-amber-400/40"
+                                        style={{
+                                            clipPath: 'polygon(50% 0%, 63% 6%, 76% 2%, 82% 14%, 94% 17%, 94% 31%, 100% 40%, 96% 52%, 100% 64%, 93% 73%, 97% 85%, 85% 89%, 81% 100%, 68% 97%, 58% 100%, 50% 93%, 42% 100%, 32% 97%, 19% 100%, 15% 89%, 3% 85%, 7% 73%, 0% 64%, 4% 52%, 0% 40%, 6% 31%, 6% 17%, 18% 14%, 24% 2%, 37% 6%)',
+                                            background: 'radial-gradient(circle at center, #1e293b 0%, #090d16 100%)',
+                                        }}
+                                    >
+                                        <span className="text-amber-400 text-xs font-bold tracking-widest uppercase mb-1">
+                                            ★ सुविधा ★
+                                        </span>
+                                        <p className="text-white font-black text-sm md:text-base leading-snug drop-shadow-md">
+                                            सभी इंश्योरेन्स<br />
+                                            एवं <span className="text-sky-300">T.P.A.</span>
+                                        </p>
+                                        <div className="w-16 h-0.5 bg-gradient-to-r from-transparent via-amber-400 to-transparent my-1.5" />
+                                        <p className="text-amber-300 font-extrabold text-xs md:text-sm tracking-wide">
+                                            की केशलैस सुविधा
+                                        </p>
+                                        <p className="text-emerald-400 font-bold text-xs uppercase tracking-wider mt-0.5">
+                                            उपलब्ध
+                                        </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -854,7 +904,7 @@ export default function Home() {
                                     <div className="text-xl">📞</div>
                                     <div>
                                         <h4 className="font-bold text-sm">Phone</h4>
-                                        <p className="text-gray-600 text-sm">+91 90390 67378</p>
+                                        <p className="text-gray-600 text-sm">+91 96390 67378</p>
                                     </div>
                                 </div>
                                 <div className="card !p-4 flex items-center gap-3">
@@ -1070,7 +1120,7 @@ export default function Home() {
                                                         setChatMessages(prev => [...prev, { role: "assistant", content: data.reply }]);
                                                     })
                                                     .catch(() => {
-                                                        setChatMessages(prev => [...prev, { role: "assistant", content: "Please call +91 90390 67378." }]);
+                                                        setChatMessages(prev => [...prev, { role: "assistant", content: "Please call +91 96390 67378." }]);
                                                     })
                                                     .finally(() => {
                                                         setIsLoading(false);
@@ -1166,7 +1216,7 @@ export default function Home() {
 
                 {/* Mobile Call Icon */}
                 <a
-                    href="tel:+919039067378"
+                    href="tel:+919639067378"
                     className="lg:hidden bg-sky-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-2xl hover:scale-110 rotate-12 transition-all"
                     aria-label="Call Hospital"
                 >
