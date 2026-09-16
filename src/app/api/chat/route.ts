@@ -4,11 +4,11 @@ const MODEL = "gemma-3-4b-it";
 
 // Shorter context for faster processing
 const HOSPITAL_CONTEXT = `You are an AI assistant for Dr. K.C. Memorial Gupta Hospital, Gajraula, UP, India.
-KEY INFO: 30+ beds, 24/7 Emergency, Phone: +91 90390 67378. TPA Helpdesk: +91 8954155336.
+KEY INFO: 30+ beds, 24/7 Emergency, Phone: +91 96390 67378. TPA Helpdesk: +91 8954155336.
 OPD: 10AM-6PM (Mon-Sat).
-SERVICES: General Medicine, Pediatrics, Gynae, Vaccination, Lab, Ultrasound (3D, 4D), OT.
-DOCTORS: Dr. Sachin Gupta (Physician), Dr. Shweta Gupta (Gynae), Dr. Gajal Gupta (Psychiatrist).
-RULES: Short answers (1-2 sentences). For appointments/emergencies, ask to call +91 90390 67378. Be professional and kind.`;
+SERVICES: General Medicine, Pediatrics, Obstetrician & Gynecologist, Liver Elastography, 2D Echo, Ultrasound, Lab, OT, Vaccination, Health Checkup.
+DOCTORS: Dr. Sachin Gupta (Physician, Chairman), Dr. Shweta Gupta (Gynecology & Obstetrics).
+RULES: Short answers (1-2 sentences). For appointments/emergencies, ask to call +91 96390 67378. Be professional and kind.`;
 
 export async function POST(request: NextRequest) {
     try {
@@ -58,20 +58,20 @@ export async function POST(request: NextRequest) {
         if (!response.ok) {
             console.error("Gemini API Error:", await response.text());
             return NextResponse.json(
-                { reply: "Please call +91 98765 43210 for help." },
+                { reply: "Please call +91 96390 67378 for help." },
                 { status: 500 }
             );
         }
 
         const data = await response.json();
         const reply = data.candidates?.[0]?.content?.parts?.[0]?.text ||
-            "Please call +91 98765 43210.";
+            "Please call +91 96390 67378.";
 
         return NextResponse.json({ reply });
     } catch (error) {
         console.error("Chat Error:", error);
         return NextResponse.json(
-            { reply: "Please call +91 98765 43210." },
+            { reply: "Please call +91 96390 67378." },
             { status: 500 }
         );
     }
